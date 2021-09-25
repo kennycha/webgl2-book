@@ -6,33 +6,9 @@ let gl,
   projectionMatrix = mat4.create(),
   modelViewMatrix = mat4.create();
 
-const getShader = (id) => {
-  const script = document.getElementById(id);
-  const shaderString = script.text.trim();
-
-  let shader;
-  if (script.type === "x-shader/x-vertex") {
-    shader = gl.createShader(gl.VERTEX_SHADER);
-  } else if (script.type === "x-shader/x-fragment") {
-    shader = gl.createShader(gl.FRAGMENT_SHADER);
-  } else {
-    return null;
-  }
-
-  gl.shaderSource(shader, shaderString);
-  gl.compileShader(shader);
-
-  if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-    console.error(gl.getShaderInfoLog(shader));
-    return null;
-  }
-
-  return shader;
-};
-
 const initProgram = () => {
-  const vertexShader = getShader("vertex-shader");
-  const fragmentShader = getShader("fragment-shader");
+  const vertexShader = utils.getShader(gl, "vertex-shader");
+  const fragmentShader = utils.getShader(gl, "fragment-shader");
 
   program = gl.createProgram();
 
@@ -147,8 +123,7 @@ const render = () => {
 
 const init = () => {
   const canvas = utils.getCanvas("webgl-canvas");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  utils.autoResizeCanvas(canvas);
 
   gl = utils.getGLContext(canvas);
   gl.clearColor(0, 0, 0, 1);
