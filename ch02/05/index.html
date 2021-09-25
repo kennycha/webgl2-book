@@ -1,0 +1,89 @@
+<html>
+  <head>
+    <title>Real-Time 3D Graphics with WebGL2</title>
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="/common/images/favicon.png"
+    />
+
+    <!-- libraries -->
+    <link rel="stylesheet" href="/common/lib/normalize.css" />
+    <script type="text/javascript" src="/common/lib/gl-matrix.js"></script>
+
+    <!-- modules -->
+    <script type="text/javascript" src="/common/js/utils.js"></script>
+
+    <!-- vertex shader -->
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      #version 300 es
+      precision mediump float;
+
+      uniform mat4 uModelViewMatrix;
+      uniform mat4 uProjectionMatrix;
+
+      in vec3 aVertexPosition;
+
+      void main(void) {
+        gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
+      }
+    </script>
+
+    <!-- fragment shader -->
+    <script id="fragment-shader" type="x-shader/x-fragment">
+      #version 300 es
+      precision mediump float;
+
+      out vec4 fragColor;
+
+      void main(void) {
+        fragColor = vec4(0.5, 0.9, 0.2, 1.0);
+      }
+    </script>
+  </head>
+
+  <body>
+    <canvas id="webgl-canvas">
+      Your browser does not support the HTML5 canvas element.
+    </canvas>
+
+    <div id="info">
+      <table>
+        <tr>
+          <th>Buffer</th>
+          <th>Name</th>
+          <th>Size</th>
+          <th>Usage</th>
+        </tr>
+        <tr>
+          <td>VBO:</td>
+          <td id="t-vbo-name"></td>
+          <td id="t-vbo-size"></td>
+          <td id="t-vbo-usage"></td>
+        </tr>
+        <tr>
+          <td>IBO:</td>
+          <td id="t-ibo-name"></td>
+          <td id="t-ibo-size"></td>
+          <td id="t-ibo-usage"></td>
+        </tr>
+      </table>
+
+      <ul>
+        <li>Is vertices a VBO? <strong id="s-is-vertices-vbo"></strong></li>
+        <li>
+          Is coneVertexBuffer a VBO?
+          <strong id="s-is-cone-vertex-buffer-vbo"></strong>
+        </li>
+        <li>Is indices a VBO? <strong id="s-is-indices-vbo"></strong></li>
+        <li>
+          Is coneIndexBuffer a VBO?
+          <strong id="s-is-cone-index-buffer-vbo"></strong>
+        </li>
+      </ul>
+    </div>
+
+    <!-- js file for webgl -->
+    <script type="text/javascript" src="./index.js"></script>
+  </body>
+</html>
