@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Real-Time 3D Graphics with WebGL2</title>
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="/common/images/favicon.png"
+    />
+
+    <!-- libraries -->
+    <link rel="stylesheet" href="/common/lib/normalize.css" />
+    <script type="text/javascript" src="/common/lib/dat.gui.js"></script>
+
+    <!-- modules -->
+    <script type="text/javascript" src="/common/js/utils.js"></script>
+
+    <!-- vertex Shader -->
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      #version 300 es
+      precision mediump float;
+
+      in vec3 aVertexPosition;
+
+      void main(void) {
+        gl_Position = vec4(aVertexPosition, 1.0);
+      }
+    </script>
+
+    <!-- fragment Shader -->
+    <script id="fragment-shader" type="x-shader/x-fragment">
+      #version 300 es
+      precision mediump float;
+
+      out vec4 fragColor;
+
+      void main(void) {
+        fragColor = vec4(1.0, 0.0, 0.0, 1.0);
+      }
+    </script>
+
+    <!-- js file for webgl -->
+    <script type="text/javascript" src="./index.js"></script>
+  </head>
+
+  <body>
+    <canvas id="webgl-canvas">
+      Your browser does not support the HTML5 canvas element.
+    </canvas>
+  </body>
+</html>
