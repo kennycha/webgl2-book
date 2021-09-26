@@ -56,6 +56,14 @@ const utils = {
     return shader;
   },
 
+  normalizeColor(color) {
+    return color.map((c) => c / 255);
+  },
+
+  denormalizeColor(color) {
+    return color.map((c) => c * 255);
+  },
+
   calculateNormals(vs, ind) {
     const x = 0;
     const y = 1;
