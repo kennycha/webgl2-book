@@ -1,0 +1,98 @@
+<html>
+  <head>
+    <title>Real-Time 3D Graphics with WebGL2</title>
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="/common/images/favicon.png"
+    />
+
+    <!-- libraries -->
+    <link rel="stylesheet" href="/common/lib/normalize.css" />
+    <script type="text/javascript" src="/common/lib/gl-matrix.js"></script>
+    <script type="text/javascript" src="/common/lib/dat.gui.js"></script>
+
+    <!-- modules -->
+    <script type="text/javascript" src="/common/js/utils.js"></script>
+
+    <!-- vertex Shader -->
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      #version 300 es
+      precision mediump float;
+
+      uniform mat4 uModelViewMatrix;
+      uniform mat4 uProjectionMatrix;
+      uniform mat4 uNormalMatrix;
+      uniform vec3 uLightPosition;
+
+      in vec3 aVertexPosition;
+      in vec3 aVertexNormal;
+
+      out vec3 vNormal;
+      out vec3 vLightRay;
+      out vec3 vEyeVector;
+
+      void main(void) {
+        vec4 vertex = uModelViewMatrix * vec4(aVertexPosition, 1.0);
+        vec4 light = uModelViewMatrix * vec4(uLightPosition, 1.0);
+
+        vNormal = vec3(uNormalMatrix * vec4(aVertexNormal, 1.0));
+        vLightRay = vertex.xyz - light.xyz;
+        vEyeVector = -vec3(vertex.xyz);
+
+        gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
+      }
+    </script>
+
+    <!-- fragment Shader -->
+    <script id="fragment-shader" type="x-shader/x-fragment">
+      #version 300 es
+      precision mediump float;
+
+      uniform vec4 uLightAmbient;
+      uniform vec4 uLightDiffuse;
+      uniform vec4 uLightSpecular;
+
+      uniform vec4 uMaterialAmbient;
+      uniform vec4 uMaterialDiffuse;
+      uniform vec4 uMaterialSpecular;
+      uniform float uShininess;
+
+      in vec3 vNormal;
+      in vec3 vLightRay;
+      in vec3 vEyeVector;
+
+      out vec4 fragColor;
+
+      void main(void) {
+        vec3 L = normalize(vLightRay);
+        vec3 N = normalize(vNormal);
+        float lambertTerm = dot(N, -L);
+
+        vec4 Ia = uLightAmbient * uMaterialAmbient;
+        vec4 Id = vec4(0.0, 0.0, 0.0, 1.0);
+        vec4 Is = vec4(0.0, 0.0, 0.0, 1.0);
+
+        if (lambertTerm > 0.0) {
+          Id = uLightDiffuse * uMaterialDiffuse * lambertTerm;
+
+          vec3 E = normalize(vEyeVector);
+          vec3 R = reflect(L, N);
+          float specular = pow(max(dot(R, E), 0.0), uShininess);
+          Is = uLightSpecular * uMaterialSpecular * specular;
+        }
+
+        fragColor = vec4(vec3(Ia + Id + Is), 1.0);
+      }
+    </script>
+
+    <!-- js file for webgl -->
+    <script type="text/javascript" src="./index.js"></script>
+  </head>
+
+  <body>
+    <canvas id="webgl-canvas">
+      Your browser does not support the HTML5 canvas element.
+    </canvas>
+  </body>
+</html>
