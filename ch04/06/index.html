@@ -1,0 +1,129 @@
+<html>
+  <head>
+    <title>Real-Time 3D Graphics with WebGL2</title>
+    <link
+      rel="shortcut icon"
+      type="image/png"
+      href="/common/images/favicon.png"
+    />
+
+    <!-- libraries -->
+    <link rel="stylesheet" href="/common/lib/normalize.css" />
+    <script type="text/javascript" src="/common/lib/gl-matrix.js"></script>
+    <script type="text/javascript" src="/common/lib/dat.gui.js"></script>
+
+    <!-- modules -->
+    <script type="text/javascript" src="/common/js/utils.js"></script>
+    <script type="text/javascript" src="/common/js/EventEmitter.js"></script>
+    <script type="text/javascript" src="/common/js/Program.js"></script>
+    <script type="text/javascript" src="/common/js/Scene.js"></script>
+    <script type="text/javascript" src="/common/js/Clock.js"></script>
+    <script type="text/javascript" src="/common/js/Axis.js"></script>
+    <script type="text/javascript" src="/common/js/Floor.js"></script>
+    <script type="text/javascript" src="/common/js/Camera.js"></script>
+    <script type="text/javascript" src="/common/js/Controls.js"></script>
+
+    <!-- vertex Shader -->
+    <script id="vertex-shader" type="x-shader/x-vertex">
+      #version 300 es
+      precision mediump float;
+
+      uniform mat4 uModelViewMatrix;
+      uniform mat4 uProjectionMatrix;
+      uniform mat4 uNormalMatrix;
+
+      uniform vec3 uLightPosition;
+      uniform vec4 uLightAmbient;
+      uniform vec4 uLightDiffuse;
+      uniform vec4 uMaterialDiffuse;
+
+      uniform bool uWireframe;
+      uniform bool uFixedLight;
+
+      in vec3 aVertexPosition;
+      in vec3 aVertexNormal;
+      in vec4 aVertexColor;
+
+      out vec4 vFinalColor;
+
+      void main(void) {
+        if (uWireframe) {
+          vFinalColor = uMaterialDiffuse;
+        }
+        else {
+          vec3 N = vec3(uNormalMatrix * vec4(aVertexNormal, 0.0));
+          vec3 L = normalize(-uLightPosition);
+
+          if (uFixedLight) {
+            L = vec3(uNormalMatrix * vec4(L, 0.0));
+          }
+
+          float lambertTerm = dot(N, -L);
+          if (lambertTerm == 0.0) {
+            lambertTerm = 0.01;
+          }
+
+          vec4 Ia = uLightAmbient;
+          vec4 Id = uMaterialDiffuse * uLightDiffuse * lambertTerm;
+
+          vFinalColor = vec4(vec3(Ia + Id), 1.0);
+        }
+
+        gl_Position = uProjectionMatrix * uModelViewMatrix * vec4(aVertexPosition, 1.0);
+      }
+    </script>
+
+    <!-- fragment Shader -->
+    <script id="fragment-shader" type="x-shader/x-fragment">
+      #version 300 es
+      precision mediump float;
+
+      in vec4 vFinalColor;
+
+      out vec4 fragColor;
+
+      void main(void) {
+        fragColor = vFinalColor;
+      }
+    </script>
+
+    <!-- js file for webgl -->
+    <script type="text/javascript" src="./index.js"></script>
+  </head>
+
+  <body>
+    <canvas id="webgl-canvas">
+      Your browser does not support the HTML5 canvas element.
+    </canvas>
+
+    <div id="info">
+      <p>Camera Matrix</p>
+      <table id="matrix">
+        <tr>
+          <td id="m0"></td>
+          <td id="m4"></td>
+          <td id="m8"></td>
+          <td id="m12"></td>
+        </tr>
+        <tr>
+          <td id="m1"></td>
+          <td id="m5"></td>
+          <td id="m9"></td>
+          <td id="m13"></td>
+        </tr>
+        <tr>
+          <td id="m2"></td>
+          <td id="m6"></td>
+          <td id="m10"></td>
+          <td id="m14"></td>
+        </tr>
+        <tr>
+          <td id="m3"></td>
+          <td id="m7"></td>
+          <td id="m11"></td>
+          <td id="m15"></td>
+        </tr>
+      </table>
+    </div>
+  </body>
+</html>
