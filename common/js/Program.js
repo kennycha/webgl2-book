@@ -6,7 +6,7 @@ class Program {
     this.program = gl.createProgram();
 
     if (!(vertexShaderId && fragmentShaderId)) {
-      return console.errror("No shader IDs were provided");
+      return console.error("No shader IDs were provided");
     }
 
     gl.attachShader(this.program, utils.getShader(gl, vertexShaderId));

@@ -20,7 +20,7 @@ class Scene {
         object.alias = alias || object.alias;
         this.add(object, attributes);
       })
-      .catch((e) => console.errror(e, ...arguments));
+      .catch((e) => console.error(e, ...arguments));
   }
 
   loadByParts(path, count, alias) {
